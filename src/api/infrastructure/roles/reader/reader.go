@@ -1,6 +1,7 @@
 package reader
 
 import (
+	pathHTTP "github.com/ExpertizeEafit/Api/src/api/domain/path/delivery/http"
 	"github.com/ExpertizeEafit/Api/src/api/infrastructure/dependencies"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -20,12 +21,13 @@ func NewRead(container *dependencies.Container) *Read {
 
 // RegisterRoutes contains the routes that the controller needs to register in order to work
 func (reader *Read) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
-
+	pathHandler := pathHTTP.NewPathDeliveryHTTPHandler(reader.container)
 	return func(g *gin.RouterGroup) {
 		v1Group := g.Group(basePath + "/v1")
 		roleGroup := v1Group.Group("/reader")
 
 		roleGroup.GET("", reader.NotImplementedHandler)
+		roleGroup.GET("/getPaths", pathHandler.HandleGetPaths)
 	}
 }
 

@@ -9,6 +9,8 @@ import (
 
 type Configurationer interface {
 	BasePath() string
+	DBDriverName() string
+	DatabaseConnectionString() string
 }
 
 func Configuration() Configurationer {
