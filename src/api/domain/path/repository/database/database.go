@@ -10,6 +10,7 @@ import (
 
 type PathRepositoryDatabase interface {
 	GetAllSeniority(ctx context.Context) (entities.Path, error)
+	GetCurrentAndNextSeniority(ctx context.Context, seniorityID int) (entities.PathExtended, error)
 }
 
 type pathRepositoryDatabase struct {

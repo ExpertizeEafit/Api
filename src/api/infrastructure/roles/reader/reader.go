@@ -28,6 +28,7 @@ func (reader *Read) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 
 		roleGroup.GET("", reader.NotImplementedHandler)
 		roleGroup.GET("/getPaths", pathHandler.HandleGetPaths)
+		roleGroup.GET("/getCurrentAndNextSeniority", pathHandler.HandlerGetCurrentAndNextSeniority)
 	}
 }
 

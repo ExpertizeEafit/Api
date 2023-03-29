@@ -10,6 +10,7 @@ import (
 
 type PathUseCases interface {
 	GetAllSeniority(ctx context.Context) (entities.Path, error)
+	GetCurrentAndNextSeniority(ctx context.Context, seniorityID int) (entities.PathExtended, error)
 }
 
 type pathUseCases struct {
