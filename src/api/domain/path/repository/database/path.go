@@ -5,10 +5,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ExpertizeEafit/Api/src/api/domain/path/entities"
+	"strings"
 )
 
 const (
-	SelectAllSeniority = `SELECT id,name,description,prior_to FROM seniority`
+	SelectAllSeniority     = `SELECT id,name,description,prior_to FROM seniority`
+	SelectCurrentSeniority = `SELECT id,name,description,prior_to,requirements FROM seniority WHERE id = ?`
+	SelectRequirements     = `SELECT r.id id,r.name,r.description,r.recommendation,IFNULL(u.status, 'LOCK') as status 
+							FROM requirement r 
+							LEFT JOIN user_requirement u on r.id = u.requirement_id 
+							WHERE r.id IN('%s');`
+	SelectNextSeniority = `SELECT id,name,description,requirements FROM seniority WHERE id IN ('%s');`
 )
 
 func (repository *pathRepositoryDatabase) GetAllSeniority(ctx context.Context) (entities.Path, error) {
@@ -31,7 +38,71 @@ func (repository *pathRepositoryDatabase) GetAllSeniority(ctx context.Context) (
 			return entities.Path{}, err
 		}
 		path[id] = seniority
-		fmt.Println(aux)
 	}
 	return path, nil
+}
+
+func (repository *pathRepositoryDatabase) GetCurrentAndNextSeniority(ctx context.Context, seniorityID int) (entities.PathExtended, error) {
+	result := entities.PathExtended{}
+	row := repository.database.QueryRow(SelectCurrentSeniority, seniorityID)
+	var priorTo []byte
+	var requirementsRaw []byte
+	var requirements []int
+	var auxId int
+	auxCurr := entities.SeniorityInfoExtended{}
+	auxCurr.Requirements = map[int]entities.RequirementInfo{}
+	err := row.Scan(&auxId, &auxCurr.Name, &auxCurr.Description, &priorTo, &requirementsRaw)
+	if err != nil {
+		return entities.PathExtended{}, err
+	}
+	err = json.Unmarshal(priorTo, &auxCurr.PriorTo)
+	if err != nil {
+		return entities.PathExtended{}, err
+	}
+	result[auxId] = auxCurr
+	err = json.Unmarshal(requirementsRaw, &requirements)
+	if err != nil {
+		return entities.PathExtended{}, err
+	}
+	stringRequirements := strings.Trim(strings.Replace(fmt.Sprint(requirements), " ", "','", -1), "[]")
+	query := fmt.Sprintf(SelectRequirements, stringRequirements)
+	rows, err := repository.database.Query(query)
+	for rows.Next() {
+		req := entities.RequirementInfo{}
+		err := rows.Scan(&auxId, &req.Name, &req.Description, &req.Recommendation, &req.Status)
+		if err != nil {
+			return entities.PathExtended{}, err
+		}
+		result[seniorityID].Requirements[auxId] = req
+	}
+
+	stringPriorTo := strings.Trim(strings.Replace(fmt.Sprint(result[seniorityID].PriorTo), " ", "','", -1), "[]")
+	query = fmt.Sprintf(SelectNextSeniority, stringPriorTo)
+	rows, err = repository.database.Query(query)
+	for rows.Next() {
+		nextSeniority := entities.SeniorityInfoExtended{}
+		nextSeniority.Requirements = map[int]entities.RequirementInfo{}
+		err = rows.Scan(&auxId, &nextSeniority.Name, &nextSeniority.Description, &requirementsRaw)
+		if err != nil {
+			return entities.PathExtended{}, err
+		}
+		result[auxId] = nextSeniority
+		err = json.Unmarshal(requirementsRaw, &requirements)
+		if err != nil {
+			return entities.PathExtended{}, err
+		}
+		stringRequirements = strings.Trim(strings.Replace(fmt.Sprint(requirements), " ", "','", -1), "[]")
+		query = fmt.Sprintf(SelectRequirements, stringRequirements)
+		rows2, err := repository.database.Query(query)
+		for rows2.Next() {
+			var auxIdReq int
+			req := entities.RequirementInfo{}
+			err = rows2.Scan(&auxIdReq, &req.Name, &req.Description, &req.Recommendation, &req.Status)
+			if err != nil {
+				return entities.PathExtended{}, err
+			}
+			result[auxId].Requirements[auxIdReq] = req
+		}
+	}
+	return result, nil
 }
