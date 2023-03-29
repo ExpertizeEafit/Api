@@ -34,3 +34,12 @@ func (handler *PathHTTPHandler) HandleGetPaths(ctx *gin.Context) {
 	}
 	ctx.JSON(200, path)
 }
+
+func (handler *PathHTTPHandler) HandlerGetCurrentAndNextSeniority(ctx *gin.Context) {
+	path, err := handler.usecase.GetCurrentAndNextSeniority(ctx, 2)
+	if err != nil {
+		ctx.JSON(500, err.Error())
+		return
+	}
+	ctx.JSON(200, path)
+}
