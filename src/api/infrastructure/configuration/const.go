@@ -1,5 +1,6 @@
 package configuration
 
 const (
-	basePath string = "/expertize"
+	basePath     string = "/expertize"
+	dbDriverName string = "mysql"
 )
