@@ -36,7 +36,7 @@ func initializeEngine(scope string, container *dependencies.Container) *gin.Engi
 	config := configuration.Configuration()
 	basePath := config.BasePath()
 
-	router := gin.New()
+	router := gin.Default()
 	group := router.Group("")
 
 	routes := map[entities.Role]func(*gin.RouterGroup){

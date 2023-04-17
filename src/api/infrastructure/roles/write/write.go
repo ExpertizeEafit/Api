@@ -1,9 +1,12 @@
 package write
 
 import (
-	"github.com/ExpertizeEafit/Api/src/api/infrastructure/dependencies"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	requirementHTTP "github.com/ExpertizeEafit/Api/src/api/domain/requirement/delivery/http"
+	"github.com/ExpertizeEafit/Api/src/api/infrastructure/dependencies"
 )
 
 // Write is main structure of consumer functionality
@@ -19,17 +22,18 @@ func NewWrite(container *dependencies.Container) *Write {
 }
 
 // RegisterRoutes contains the routes that the controller needs to register in order to work
-func (reader *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
-
+func (writer *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
+	requirementHandler := requirementHTTP.NewRequirementHTTPHandler(writer.container)
 	return func(g *gin.RouterGroup) {
 		v1Group := g.Group(basePath + "/v1")
 		roleGroup := v1Group.Group("/writer")
 
-		roleGroup.GET("", reader.NotImplementedHandler)
+		roleGroup.GET("", writer.NotImplementedHandler)
+		roleGroup.POST("/upload", requirementHandler.HandlerUploadFile)
 	}
 }
 
 // NotImplementedHandler handler for not implemented response
-func (reader *Write) NotImplementedHandler(ctx *gin.Context) {
+func (writer *Write) NotImplementedHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusNotImplemented, gin.H{"data": "writer"})
 }
