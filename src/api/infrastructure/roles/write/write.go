@@ -29,7 +29,7 @@ func (writer *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 		roleGroup := v1Group.Group("/writer")
 
 		roleGroup.GET("", writer.NotImplementedHandler)
-		roleGroup.POST("/upload", requirementHandler.HandlerUploadFile)
+		roleGroup.POST("/upload", requirementHandler.HandlerUploadRequirement)
 	}
 }
 
