@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/ExpertizeEafit/Api/src/api/domain/path/entities"
 	"strings"
+
+	"github.com/ExpertizeEafit/Api/src/api/domain/path/entities"
 )
 
 const (
