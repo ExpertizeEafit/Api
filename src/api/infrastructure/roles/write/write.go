@@ -5,6 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	pathHTTP "github.com/ExpertizeEafit/Api/src/api/domain/path/delivery/http"
+	rankingHTTP "github.com/ExpertizeEafit/Api/src/api/domain/ranking/delivery/http"
 	requirementHTTP "github.com/ExpertizeEafit/Api/src/api/domain/requirement/delivery/http"
 	"github.com/ExpertizeEafit/Api/src/api/infrastructure/dependencies"
 )
@@ -24,12 +26,21 @@ func NewWrite(container *dependencies.Container) *Write {
 // RegisterRoutes contains the routes that the controller needs to register in order to work
 func (writer *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 	requirementHandler := requirementHTTP.NewRequirementHTTPHandler(writer.container)
+	pathHandler := pathHTTP.NewPathDeliveryHTTPHandler(writer.container)
+	rankingHandler := rankingHTTP.NewRankingHTTPHanlder(writer.container)
+
 	return func(g *gin.RouterGroup) {
 		v1Group := g.Group(basePath + "/v1")
 		roleGroup := v1Group.Group("/writer")
 
 		roleGroup.GET("", writer.NotImplementedHandler)
 		roleGroup.POST("/upload", requirementHandler.HandlerUploadRequirement)
+
+		// Reader
+		roleGroup.GET("/getPaths", pathHandler.HandleGetPaths)
+		roleGroup.GET("/getCurrentAndNextSeniority", pathHandler.HandlerGetCurrentAndNextSeniority)
+		roleGroup.GET("/getRequirementsHistory/:id", requirementHandler.HandlerGetRequirementHistory)
+		roleGroup.GET("/ranking/:id", rankingHandler.HandlerGetRanking)
 	}
 }
 
