@@ -2,6 +2,7 @@ package reader
 
 import (
 	pathHTTP "github.com/ExpertizeEafit/Api/src/api/domain/path/delivery/http"
+	http3 "github.com/ExpertizeEafit/Api/src/api/domain/ranking/delivery/http"
 	http2 "github.com/ExpertizeEafit/Api/src/api/domain/requirement/delivery/http"
 	"github.com/ExpertizeEafit/Api/src/api/infrastructure/dependencies"
 	"github.com/gin-gonic/gin"
@@ -24,6 +25,7 @@ func NewRead(container *dependencies.Container) *Read {
 func (reader *Read) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 	pathHandler := pathHTTP.NewPathDeliveryHTTPHandler(reader.container)
 	requirementHandler := http2.NewRequirementHTTPHandler(reader.container)
+	rankingHandler := http3.NewRankingHTTPHanlder(reader.container)
 	return func(g *gin.RouterGroup) {
 		v1Group := g.Group(basePath + "/v1")
 		roleGroup := v1Group.Group("/reader")
@@ -32,6 +34,7 @@ func (reader *Read) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 		roleGroup.GET("/getPaths", pathHandler.HandleGetPaths)
 		roleGroup.GET("/getCurrentAndNextSeniority", pathHandler.HandlerGetCurrentAndNextSeniority)
 		roleGroup.GET("/getRequirementsHistory/:id", requirementHandler.HandlerGetRequirementHistory)
+		roleGroup.GET("/ranking", rankingHandler.HandlerGetRanking)
 	}
 }
 
