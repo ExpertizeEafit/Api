@@ -10,6 +10,7 @@ import (
 
 type RequirementRepository interface {
 	UploadRequirement(ctx context.Context, data entities.RequirementFile) error
+	GetRequirementHistory(ctx context.Context, id int64) ([]entities.UserRequirementStatus, error)
 }
 
 type requirementRepository struct {
