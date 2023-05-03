@@ -5,3 +5,8 @@ type LoginBasicInfo struct {
 	Username       string `json:"username"`
 	ChangePassword bool   `json:"change_password"`
 }
+
+type LoginData struct {
+	Id       string `json:"dni"`
+	Password string `json:"password"`
+}
