@@ -1,12 +1,12 @@
 package entities
 
 type UserRank struct {
-	Rank     int
-	Username string
-	Points   int
+	Rank     int    `json:"rank"`
+	Username string `json:"username"`
+	Points   int    `json:"points"`
 }
 
 type RankList struct {
-	Ranking []UserRank
-	MyRank  UserRank
+	Ranking []UserRank `json:"ranking"`
+	MyRank  UserRank   `json:"myrank"`
 }

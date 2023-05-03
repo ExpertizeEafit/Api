@@ -8,6 +8,7 @@ import (
 	pathHTTP "github.com/ExpertizeEafit/Api/src/api/domain/path/delivery/http"
 	rankingHTTP "github.com/ExpertizeEafit/Api/src/api/domain/ranking/delivery/http"
 	requirementHTTP "github.com/ExpertizeEafit/Api/src/api/domain/requirement/delivery/http"
+	userHTTP "github.com/ExpertizeEafit/Api/src/api/domain/user/delivery/http"
 	"github.com/ExpertizeEafit/Api/src/api/infrastructure/dependencies"
 )
 
@@ -28,6 +29,7 @@ func (writer *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 	requirementHandler := requirementHTTP.NewRequirementHTTPHandler(writer.container)
 	pathHandler := pathHTTP.NewPathDeliveryHTTPHandler(writer.container)
 	rankingHandler := rankingHTTP.NewRankingHTTPHanlder(writer.container)
+	userHandler := userHTTP.NewUserHTTPHandler(writer.container)
 
 	return func(g *gin.RouterGroup) {
 		v1Group := g.Group(basePath + "/v1")
@@ -41,6 +43,7 @@ func (writer *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 		roleGroup.GET("/getCurrentAndNextSeniority", pathHandler.HandlerGetCurrentAndNextSeniority)
 		roleGroup.GET("/getRequirementsHistory/:id", requirementHandler.HandlerGetRequirementHistory)
 		roleGroup.GET("/ranking/:id", rankingHandler.HandlerGetRanking)
+		roleGroup.GET("/login", userHandler.HandlerLogin)
 	}
 }
 
