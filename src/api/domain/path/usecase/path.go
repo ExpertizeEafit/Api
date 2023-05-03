@@ -10,6 +10,6 @@ func (usecase *pathUseCases) GetAllSeniority(ctx context.Context) (entities.Path
 	return usecase.pathRepository.GetAllSeniority(ctx)
 }
 
-func (usecase *pathUseCases) GetCurrentAndNextSeniority(ctx context.Context, seniorityID int) (entities.PathExtended, error) {
-	return usecase.pathRepository.GetCurrentAndNextSeniority(ctx, seniorityID)
+func (usecase *pathUseCases) GetCurrentAndNextSeniority(ctx context.Context, userID int) (entities.PathExtended, error) {
+	return usecase.pathRepository.GetCurrentAndNextSeniority(ctx, userID)
 }
