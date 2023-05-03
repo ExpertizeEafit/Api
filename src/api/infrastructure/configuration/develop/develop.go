@@ -30,7 +30,7 @@ func (*Configuration) DatabaseConnectionString() string {
 	} else {
 		username = os.Getenv(dbUsername)
 		password = os.Getenv(dbPassword)
-		host = os.Getenv(host)
+		host = os.Getenv(dbHost)
 	}
 	connection := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true", username, password, host, dbName)
 	return connection
