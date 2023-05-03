@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 func (handler *PathHTTPHandler) HandleGetPaths(ctx *gin.Context) {
@@ -36,7 +37,8 @@ func (handler *PathHTTPHandler) HandleGetPaths(ctx *gin.Context) {
 }
 
 func (handler *PathHTTPHandler) HandlerGetCurrentAndNextSeniority(ctx *gin.Context) {
-	path, err := handler.usecase.GetCurrentAndNextSeniority(ctx, 2)
+	id, err := strconv.Atoi(ctx.Param("id"))
+	path, err := handler.usecase.GetCurrentAndNextSeniority(ctx, id)
 	if err != nil {
 		ctx.JSON(500, err.Error())
 		return

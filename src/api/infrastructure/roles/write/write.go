@@ -40,7 +40,7 @@ func (writer *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 
 		// Reader
 		roleGroup.GET("/getPaths", pathHandler.HandleGetPaths)
-		roleGroup.GET("/getCurrentAndNextSeniority", pathHandler.HandlerGetCurrentAndNextSeniority)
+		roleGroup.GET("/getCurrentAndNextSeniority/:id", pathHandler.HandlerGetCurrentAndNextSeniority)
 		roleGroup.GET("/getRequirementsHistory/:id", requirementHandler.HandlerGetRequirementHistory)
 		roleGroup.GET("/ranking/:id", rankingHandler.HandlerGetRanking)
 		roleGroup.POST("/login", userHandler.HandlerLogin)
