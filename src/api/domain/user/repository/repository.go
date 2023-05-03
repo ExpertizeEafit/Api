@@ -9,7 +9,7 @@ import (
 )
 
 type UserRepository interface {
-	Login(ctx context.Context, idNumber int, password string) (entities.LoginBasicInfo, error)
+	Login(ctx context.Context, idNumber string, password string) (entities.LoginBasicInfo, error)
 }
 
 type userRepository struct {

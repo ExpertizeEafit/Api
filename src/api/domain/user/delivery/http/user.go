@@ -1,20 +1,18 @@
 package http
 
 import (
-	"net/http"
-	"strconv"
-
+	"github.com/ExpertizeEafit/Api/src/api/domain/user/entities"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func (handler *UserHTTPHandler) HandlerLogin(ctx *gin.Context) {
-	idNumber, err := strconv.Atoi(ctx.Query("idNumber"))
-	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, nil)
+	var data entities.LoginData
+	if err := ctx.ShouldBind(&data); err != nil {
+		ctx.JSON(http.StatusBadRequest, nil)
 		return
 	}
-	password := ctx.Query("password")
-	res, err := handler.usecase.Login(ctx, idNumber, password)
+	res, err := handler.usecase.Login(ctx, data.Id, data.Password)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, err)
 		return
