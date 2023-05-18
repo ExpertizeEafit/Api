@@ -37,8 +37,6 @@ func (writer *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 
 		roleGroup.GET("", writer.NotImplementedHandler)
 		roleGroup.POST("/upload", requirementHandler.HandlerUploadRequirement)
-
-		// Reader
 		roleGroup.GET("/getPaths", pathHandler.HandleGetPaths)
 		roleGroup.GET("/getCurrentAndNextSeniority/:id", pathHandler.HandlerGetCurrentAndNextSeniority)
 		roleGroup.GET("/getRequirementsHistory/:id", requirementHandler.HandlerGetRequirementHistory)
@@ -46,6 +44,9 @@ func (writer *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 		roleGroup.POST("/login", userHandler.HandlerLogin)
 		roleGroup.POST("/register", userHandler.HandlerRegister)
 		roleGroup.POST("/updatePassword", userHandler.HandlerUpdatePassword)
+		roleGroup.GET("/PendingRequirements", requirementHandler.HandlerGetPendingRequirements)
+		roleGroup.POST("/UpdateStatus", requirementHandler.HandlerUpdateRequirementStatus)
+		roleGroup.GET("/DownloadRequirement/:id", requirementHandler.HandlerDownloadRequirementFile)
 	}
 }
 

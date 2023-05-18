@@ -3,14 +3,16 @@ package database
 import (
 	"bytes"
 	"context"
-	"io"
-
 	"github.com/ExpertizeEafit/Api/src/api/domain/requirement/entities"
+	"io"
 )
 
 const (
 	InsertUserRequirement     = `INSERT INTO user_requirement(requirement_id, user_id, status,file) VALUES (?,?,?,?);`
 	GetUserRequirementHistory = `SELECT u.id,r.name,u.status FROM user_requirement u INNER JOIN requirement r on u.requirement_id = r.id WHERE user_id = ?;`
+	GetPendingRequirements    = `SELECT ur.id,r.name,status FROM user_requirement ur LEFT JOIN requirement r on r.id = ur.requirement_id WHERE ur.status = 'PENDING';`
+	UpdateStatus              = `UPDATE user_requirement SET status = ? WHERE id = ?;`
+	SelectFile                = `SELECT file FROM user_requirement WHERE id = ?;`
 )
 
 func (repository *requirementRepositoryDatabase) UploadRequirement(ctx context.Context, data entities.RequirementFile) error {
@@ -43,4 +45,39 @@ func (repository *requirementRepositoryDatabase) GetRequirementHistory(ctx conte
 		history = append(history, aux)
 	}
 	return history, nil
+}
+
+func (repository *requirementRepositoryDatabase) GetPendingRequirements(ctx context.Context) ([]entities.UserRequirementStatus, error) {
+	rows, err := repository.database.Query(GetPendingRequirements)
+	defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
+	requirements := make([]entities.UserRequirementStatus, 0)
+	for rows.Next() {
+		aux := entities.UserRequirementStatus{}
+		rows.Scan(&aux.Id, &aux.Name, &aux.Status)
+		requirements = append(requirements, aux)
+	}
+	return requirements, nil
+}
+
+func (repository *requirementRepositoryDatabase) UpdateRequirementStatus(ctx context.Context, status entities.Status, id int) error {
+	_, err := repository.database.Exec(UpdateStatus, status, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository *requirementRepositoryDatabase) DownloadRequirementFile(ctx context.Context, id int) (*bytes.Buffer, error) {
+	row := repository.database.QueryRow(SelectFile, id)
+
+	data := make([]byte, 0)
+	err := row.Scan(&data)
+	if err != nil {
+		return nil, err
+	}
+	buff := bytes.NewBuffer(data)
+	return buff, nil
 }
