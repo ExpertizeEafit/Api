@@ -10,6 +10,8 @@ import (
 
 type UserUseCases interface {
 	Login(ctx context.Context, idNumber string, password string) (entities.LoginBasicInfo, error)
+	Register(ctx context.Context, users [][]string) []entities.UserRegisterError
+	UpdatePassword(ctx context.Context, data entities.UpdatePassword) error
 }
 
 type userUseCases struct {
