@@ -10,6 +10,8 @@ import (
 
 type UserRepositoryDatabase interface {
 	Login(ctx context.Context, idNumber string, password string) (entities.LoginBasicInfo, error)
+	Register(ctx context.Context, data entities.RegisterData) error
+	UpdatePassword(ctx context.Context, data entities.UpdatePassword) error
 }
 
 type userRepositoryDatabase struct {
