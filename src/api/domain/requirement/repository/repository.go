@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"bytes"
 	"context"
 
 	"github.com/ExpertizeEafit/Api/src/api/domain/requirement/entities"
@@ -11,6 +12,9 @@ import (
 type RequirementRepository interface {
 	UploadRequirement(ctx context.Context, data entities.RequirementFile) error
 	GetRequirementHistory(ctx context.Context, id int64) ([]entities.UserRequirementStatus, error)
+	GetPendingRequirements(ctx context.Context) ([]entities.UserRequirementStatus, error)
+	UpdateRequirementStatus(ctx context.Context, status entities.Status, id int) error
+	DownloadRequirementFile(ctx context.Context, id int) (*bytes.Buffer, error)
 }
 
 type requirementRepository struct {
