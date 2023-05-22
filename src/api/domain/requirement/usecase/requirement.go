@@ -26,3 +26,11 @@ func (usecase *requirementUseCases) UpdateRequirementStatus(ctx context.Context,
 func (usecase *requirementUseCases) DownloadRequirementFile(ctx context.Context, id int) (*bytes.Buffer, error) {
 	return usecase.repository.DownloadRequirementFile(ctx, id)
 }
+
+func (usecase *requirementUseCases) CreateRequirement(ctx context.Context, data entities.RequirementData) (int64, error) {
+	return usecase.repository.CreateRequirement(ctx, data)
+}
+
+func (usecase *requirementUseCases) GetAllRequirements(ctx context.Context) ([]entities.RequirementBasicData, error) {
+	return usecase.repository.GetAllRequirements(ctx)
+}

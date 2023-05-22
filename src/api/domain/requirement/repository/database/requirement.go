@@ -13,6 +13,8 @@ const (
 	GetPendingRequirements    = `SELECT ur.id,r.name,status FROM user_requirement ur LEFT JOIN requirement r on r.id = ur.requirement_id WHERE ur.status = 'PENDING';`
 	UpdateStatus              = `UPDATE user_requirement SET status = ? WHERE id = ?;`
 	SelectFile                = `SELECT file FROM user_requirement WHERE id = ?;`
+	CreateRequirement         = `INSERT INTO requirement (name, description, recommendation, points) VALUES (?,?,?,?);`
+	SelectRequirements        = `SELECT id,name,description FROM requirement;`
 )
 
 func (repository *requirementRepositoryDatabase) UploadRequirement(ctx context.Context, data entities.RequirementFile) error {
@@ -80,4 +82,30 @@ func (repository *requirementRepositoryDatabase) DownloadRequirementFile(ctx con
 	}
 	buff := bytes.NewBuffer(data)
 	return buff, nil
+}
+
+func (repository *requirementRepositoryDatabase) CreateRequirement(ctx context.Context, data entities.RequirementData) (int64, error) {
+	res, err := repository.database.Exec(CreateRequirement, data.Name, data.Description, data.Recommendation, data.Points)
+	if err != nil {
+		return 0, err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (repository *requirementRepositoryDatabase) GetAllRequirements(ctx context.Context) ([]entities.RequirementBasicData, error) {
+	rows, err := repository.database.Query(SelectRequirements)
+	if err != nil {
+		return nil, err
+	}
+	requirements := make([]entities.RequirementBasicData, 0)
+	for rows.Next() {
+		aux := entities.RequirementBasicData{}
+		rows.Scan(&aux.Id, &aux.Name, &aux.Description)
+		requirements = append(requirements, aux)
+	}
+	return requirements, nil
 }

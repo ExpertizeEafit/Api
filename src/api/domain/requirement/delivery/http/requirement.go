@@ -90,3 +90,26 @@ func (handler *RequirementHTTPHandler) HandlerDownloadRequirementFile(ctx *gin.C
 	ctx.Writer.Header().Set("Content-Type", "application/pdf")
 	io.Copy(ctx.Writer, buff)
 }
+
+func (handler *RequirementHTTPHandler) HandlerCreateRequirement(ctx *gin.Context) {
+	data := entities.RequirementData{}
+	if err := ctx.ShouldBind(&data); err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	id, err := handler.usecase.CreateRequirement(ctx, data)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusCreated, id)
+}
+
+func (handler *RequirementHTTPHandler) HandlerGetAllRequirements(ctx *gin.Context) {
+	requirements, err := handler.usecase.GetAllRequirements(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	ctx.JSON(http.StatusOK, requirements)
+}
