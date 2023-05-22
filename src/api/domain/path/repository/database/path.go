@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/ExpertizeEafit/Api/src/api/domain/path/entities"
@@ -30,7 +31,7 @@ func (repository *pathRepositoryDatabase) GetAllSeniority(ctx context.Context) (
 		seniority := entities.SeniorityInfo{}
 		var aux []byte
 		var id int
-		err := rows.Scan(&id, &seniority.Name, &seniority.Description, &aux)
+		err := rows.Scan(&seniority.Id, &seniority.Name, &seniority.Description, &aux)
 		if err != nil {
 			return entities.Path{}, err
 		}
@@ -38,6 +39,7 @@ func (repository *pathRepositoryDatabase) GetAllSeniority(ctx context.Context) (
 		if err != nil {
 			return entities.Path{}, err
 		}
+		id, err = strconv.Atoi(seniority.Id)
 		path[id] = seniority
 	}
 	return path, nil
@@ -59,11 +61,12 @@ func (repository *pathRepositoryDatabase) GetCurrentAndNextSeniority(ctx context
 	var requirements []int
 	var auxId int
 	auxCurr := entities.SeniorityInfoExtended{}
-	auxCurr.Requirements = map[int]entities.RequirementInfo{}
-	err = row.Scan(&auxId, &auxCurr.Name, &auxCurr.Description, &priorTo, &requirementsRaw)
+	auxCurr.Requirements = []entities.RequirementInfo{}
+	err = row.Scan(&auxCurr.Id, &auxCurr.Name, &auxCurr.Description, &priorTo, &requirementsRaw)
 	if err != nil {
 		return entities.PathExtended{}, err
 	}
+	auxId, err = strconv.Atoi(auxCurr.Id)
 	err = json.Unmarshal(priorTo, &auxCurr.PriorTo)
 	if err != nil {
 		return entities.PathExtended{}, err
@@ -76,21 +79,25 @@ func (repository *pathRepositoryDatabase) GetCurrentAndNextSeniority(ctx context
 	stringRequirements := strings.Trim(strings.Replace(fmt.Sprint(requirements), " ", "','", -1), "[]")
 	query := fmt.Sprintf(SelectRequirements, stringRequirements)
 	rows, err := repository.database.Query(query, userID)
+	seniorityInfo := result[auxId]
 	for rows.Next() {
 		req := entities.RequirementInfo{}
-		err := rows.Scan(&auxId, &req.Name, &req.Description, &req.Recommendation, &req.Status)
+		err := rows.Scan(&req.Id, &req.Name, &req.Description, &req.Recommendation, &req.Status)
 		if err != nil {
 			return entities.PathExtended{}, err
 		}
-		result[seniorityID].Requirements[auxId] = req
+
+		seniorityInfo.Requirements = append(seniorityInfo.Requirements, req)
 	}
+
+	result[auxId] = seniorityInfo
 
 	stringPriorTo := strings.Trim(strings.Replace(fmt.Sprint(result[seniorityID].PriorTo), " ", "','", -1), "[]")
 	query = fmt.Sprintf(SelectNextSeniority, stringPriorTo)
 	rows, err = repository.database.Query(query)
 	for rows.Next() {
 		nextSeniority := entities.SeniorityInfoExtended{}
-		nextSeniority.Requirements = map[int]entities.RequirementInfo{}
+		nextSeniority.Requirements = []entities.RequirementInfo{}
 		err = rows.Scan(&auxId, &nextSeniority.Name, &nextSeniority.Description, &requirementsRaw)
 		if err != nil {
 			return entities.PathExtended{}, err
@@ -103,15 +110,16 @@ func (repository *pathRepositoryDatabase) GetCurrentAndNextSeniority(ctx context
 		stringRequirements = strings.Trim(strings.Replace(fmt.Sprint(requirements), " ", "','", -1), "[]")
 		query = fmt.Sprintf(SelectRequirements, stringRequirements)
 		rows2, err := repository.database.Query(query, userID)
+		seniorityInfo := result[auxId]
 		for rows2.Next() {
-			var auxIdReq int
 			req := entities.RequirementInfo{}
-			err = rows2.Scan(&auxIdReq, &req.Name, &req.Description, &req.Recommendation, &req.Status)
+			err = rows2.Scan(&req.Id, &req.Name, &req.Description, &req.Recommendation, &req.Status)
 			if err != nil {
 				return entities.PathExtended{}, err
 			}
-			result[auxId].Requirements[auxIdReq] = req
+			seniorityInfo.Requirements = append(seniorityInfo.Requirements, req)
 		}
+		result[auxId] = seniorityInfo
 	}
 	return result, nil
 }

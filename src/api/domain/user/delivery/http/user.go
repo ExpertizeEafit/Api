@@ -1,9 +1,10 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/ExpertizeEafit/Api/src/api/domain/user/entities"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func (handler *UserHTTPHandler) HandlerLogin(ctx *gin.Context) {
@@ -21,7 +22,7 @@ func (handler *UserHTTPHandler) HandlerLogin(ctx *gin.Context) {
 }
 
 func (handler *UserHTTPHandler) HandlerRegister(ctx *gin.Context) {
-	data := [][]string{}
+	data := []entities.RegisterData{}
 	if err := ctx.ShouldBind(&data); err != nil {
 		ctx.JSON(http.StatusBadRequest, nil)
 		return
