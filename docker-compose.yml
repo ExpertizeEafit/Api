@@ -6,8 +6,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+      - "3306:3306"
     environment:
       DB_PASSWORD: ""
-      DB_USERNAME: ""
-      DB_HOST: ""
-      SCOPE: ""
+      DB_USERNAME: "root"
+      DB_HOST: "host.docker.internal"
+      SCOPE: "develop-write"
