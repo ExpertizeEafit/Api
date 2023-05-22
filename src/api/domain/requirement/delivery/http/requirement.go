@@ -56,19 +56,19 @@ func (handler *RequirementHTTPHandler) HandlerGetPendingRequirements(ctx *gin.Co
 
 func (handler *RequirementHTTPHandler) HandlerUpdateRequirementStatus(ctx *gin.Context) {
 	data := struct {
-		id     int    `json:"id"`
-		status string `json:"status"`
+		Id     int    `json:"id"`
+		Status string `json:"status"`
 	}{}
 	if err := ctx.ShouldBind(&data); err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
-	status := entities.Status(data.status)
+	status := entities.Status(data.Status)
 	if !entities.PossibleStatus.Contains(status) {
 		ctx.JSON(http.StatusBadRequest, "Invalid status")
 		return
 	}
-	err := handler.usecase.UpdateRequirementStatus(ctx, status, data.id)
+	err := handler.usecase.UpdateRequirementStatus(ctx, status, data.Id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
