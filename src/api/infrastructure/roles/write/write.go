@@ -47,6 +47,8 @@ func (writer *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 		roleGroup.GET("/PendingRequirements", requirementHandler.HandlerGetPendingRequirements)
 		roleGroup.POST("/UpdateStatus", requirementHandler.HandlerUpdateRequirementStatus)
 		roleGroup.GET("/DownloadRequirement/:id", requirementHandler.HandlerDownloadRequirementFile)
+		roleGroup.POST("/CreateRequirement", requirementHandler.HandlerCreateRequirement)
+		roleGroup.GET("/GetAllRequirements", requirementHandler.HandlerGetAllRequirements)
 	}
 }
 

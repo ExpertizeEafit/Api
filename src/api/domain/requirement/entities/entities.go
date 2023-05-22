@@ -14,6 +14,19 @@ type UserRequirementStatus struct {
 	Status string `json:"status"`
 }
 
+type RequirementData struct {
+	Name           string `json:"name"`
+	Description    string `json:"description"`
+	Recommendation string `json:"recommendation"`
+	Points         int    `json:"points"`
+}
+
+type RequirementBasicData struct {
+	Id          int64  `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 type (
 	Status     string
 	StatusList []Status

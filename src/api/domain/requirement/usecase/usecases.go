@@ -14,6 +14,8 @@ type RequirementUseCases interface {
 	GetPendingRequirements(ctx context.Context) ([]entities.UserRequirementStatus, error)
 	UpdateRequirementStatus(ctx context.Context, status entities.Status, id int) error
 	DownloadRequirementFile(ctx context.Context, id int) (*bytes.Buffer, error)
+	CreateRequirement(ctx context.Context, data entities.RequirementData) (int64, error)
+	GetAllRequirements(ctx context.Context) ([]entities.RequirementBasicData, error)
 }
 
 type requirementUseCases struct {
