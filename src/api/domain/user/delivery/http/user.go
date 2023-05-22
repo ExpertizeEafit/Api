@@ -34,12 +34,12 @@ func (handler *UserHTTPHandler) HandlerRegister(ctx *gin.Context) {
 func (handler *UserHTTPHandler) HandlerUpdatePassword(ctx *gin.Context) {
 	data := entities.UpdatePassword{}
 	if err := ctx.ShouldBind(&data); err != nil {
-		ctx.JSON(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 	err := handler.usecase.UpdatePassword(ctx, data)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusUnauthorized, err.Error())
 		return
 	}
 	ctx.JSON(http.StatusAccepted, nil)
