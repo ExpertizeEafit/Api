@@ -1,6 +1,7 @@
 package write
 
 import (
+	seniorityHTTP "github.com/ExpertizeEafit/Api/src/api/domain/seniority/delivery/http"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,6 +31,7 @@ func (writer *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 	pathHandler := pathHTTP.NewPathDeliveryHTTPHandler(writer.container)
 	rankingHandler := rankingHTTP.NewRankingHTTPHanlder(writer.container)
 	userHandler := userHTTP.NewUserHTTPHandler(writer.container)
+	seniorityHandler := seniorityHTTP.NewSeniorityDeliveryHTTPHandler(writer.container)
 
 	return func(g *gin.RouterGroup) {
 		v1Group := g.Group(basePath + "/v1")
@@ -49,6 +51,9 @@ func (writer *Write) RegisterRoutes(basePath string) func(*gin.RouterGroup) {
 		roleGroup.GET("/DownloadRequirement/:id", requirementHandler.HandlerDownloadRequirementFile)
 		roleGroup.POST("/CreateRequirement", requirementHandler.HandlerCreateRequirement)
 		roleGroup.GET("/GetAllRequirements", requirementHandler.HandlerGetAllRequirements)
+		roleGroup.GET("/GetSeniorityRequest", seniorityHandler.HandlerGetSeniorityRequestList)
+		roleGroup.POST("/CreateSeniorityRequest", seniorityHandler.HandlerCreateSeniorityRequest)
+		roleGroup.POST("/UpdateSeniorityRequest", seniorityHandler.HandlerUpdateSeniorityRequest)
 	}
 }
 
