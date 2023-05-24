@@ -3,14 +3,15 @@ package database
 import (
 	"bytes"
 	"context"
-	"github.com/ExpertizeEafit/Api/src/api/domain/requirement/entities"
 	"io"
+
+	"github.com/ExpertizeEafit/Api/src/api/domain/requirement/entities"
 )
 
 const (
 	InsertUserRequirement     = `INSERT INTO user_requirement(requirement_id, user_id, status,file) VALUES (?,?,?,?);`
 	GetUserRequirementHistory = `SELECT u.id,r.name,u.status FROM user_requirement u INNER JOIN requirement r on u.requirement_id = r.id WHERE user_id = ?;`
-	GetPendingRequirements    = `SELECT ur.id,r.name,status FROM user_requirement ur LEFT JOIN requirement r on r.id = ur.requirement_id WHERE ur.status = 'PENDING';`
+	GetPendingRequirements    = `SELECT requests.id, requests.name, requests.status, CONCAT(user.name, ' ', user.last_name) AS full_name FROM (SELECT ur.id,r.name,status, ur.user_id FROM user_requirement ur LEFT JOIN requirement r on r.id = ur.requirement_id WHERE ur.status = 'PENDING') requests INNER JOIN user ON user.id = requests.user_id;`
 	UpdateStatus              = `UPDATE user_requirement SET status = ? WHERE id = ?;`
 	SelectFile                = `SELECT file FROM user_requirement WHERE id = ?;`
 	CreateRequirement         = `INSERT INTO requirement (name, description, recommendation, points) VALUES (?,?,?,?);`
@@ -49,16 +50,16 @@ func (repository *requirementRepositoryDatabase) GetRequirementHistory(ctx conte
 	return history, nil
 }
 
-func (repository *requirementRepositoryDatabase) GetPendingRequirements(ctx context.Context) ([]entities.UserRequirementStatus, error) {
+func (repository *requirementRepositoryDatabase) GetPendingRequirements(ctx context.Context) ([]entities.UserPendingRequirement, error) {
 	rows, err := repository.database.Query(GetPendingRequirements)
 	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
-	requirements := make([]entities.UserRequirementStatus, 0)
+	requirements := make([]entities.UserPendingRequirement, 0)
 	for rows.Next() {
-		aux := entities.UserRequirementStatus{}
-		rows.Scan(&aux.Id, &aux.Name, &aux.Status)
+		aux := entities.UserPendingRequirement{}
+		rows.Scan(&aux.Id, &aux.Name, &aux.Status, &aux.FullName)
 		requirements = append(requirements, aux)
 	}
 	return requirements, nil

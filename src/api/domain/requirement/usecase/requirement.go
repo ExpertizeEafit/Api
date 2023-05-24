@@ -15,7 +15,7 @@ func (usecase *requirementUseCases) GetRequirementHistory(ctx context.Context, i
 	return usecase.repository.GetRequirementHistory(ctx, int64(id))
 }
 
-func (usecase *requirementUseCases) GetPendingRequirements(ctx context.Context) ([]entities.UserRequirementStatus, error) {
+func (usecase *requirementUseCases) GetPendingRequirements(ctx context.Context) ([]entities.UserPendingRequirement, error) {
 	return usecase.repository.GetPendingRequirements(ctx)
 }
 

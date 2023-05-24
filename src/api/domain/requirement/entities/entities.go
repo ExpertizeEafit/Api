@@ -14,6 +14,13 @@ type UserRequirementStatus struct {
 	Status string `json:"status"`
 }
 
+type UserPendingRequirement struct {
+	Id       int64  `json:"id"`
+	Name     string `json:"name"`
+	Status   string `json:"status"`
+	FullName string `json:"fullname"`
+}
+
 type RequirementData struct {
 	Name           string `json:"name"`
 	Description    string `json:"description"`
