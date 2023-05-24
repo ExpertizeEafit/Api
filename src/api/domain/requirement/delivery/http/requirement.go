@@ -28,7 +28,7 @@ func (handler *RequirementHTTPHandler) HandlerUploadRequirement(ctx *gin.Context
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, nil)
+	ctx.JSON(http.StatusCreated, "File uploaded successfully.")
 }
 
 func (handler *RequirementHTTPHandler) HandlerGetRequirementHistory(ctx *gin.Context) {
