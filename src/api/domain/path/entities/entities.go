@@ -17,6 +17,7 @@ type (
 	}
 	SeniorityInfoExtended struct {
 		SeniorityInfo
+		Status       string            `json:"status"`
 		Requirements []RequirementInfo `json:"requirements"`
 	}
 	Path         map[int]SeniorityInfo
