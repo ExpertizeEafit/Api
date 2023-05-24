@@ -71,6 +71,7 @@ func (repository *pathRepositoryDatabase) GetCurrentAndNextSeniority(ctx context
 	if err != nil {
 		return entities.PathExtended{}, err
 	}
+	auxCurr.Status = "ACTIVE"
 	result[auxId] = auxCurr
 	err = json.Unmarshal(requirementsRaw, &requirements)
 	if err != nil {
@@ -119,6 +120,7 @@ func (repository *pathRepositoryDatabase) GetCurrentAndNextSeniority(ctx context
 			}
 			seniorityInfo.Requirements = append(seniorityInfo.Requirements, req)
 		}
+		seniorityInfo.Status = "LOCK"
 		result[auxId] = seniorityInfo
 	}
 	return result, nil

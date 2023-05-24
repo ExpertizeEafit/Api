@@ -28,7 +28,7 @@ func main() {
 	// server engine initialization
 	var server *gin.Engine
 	server = initializeEngine(scope, container)
-	server.Run(":8080")
+	server.Run(":80")
 }
 
 // build validate and initialize gordic engine

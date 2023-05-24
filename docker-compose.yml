@@ -1,11 +1,11 @@
-version: "1.0"
+version: "3.5"
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "80:80"
       - "3306:3306"
     environment:
       DB_PASSWORD: ""
