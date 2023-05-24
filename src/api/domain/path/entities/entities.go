@@ -13,6 +13,7 @@ type (
 		Description    string `json:"description"`
 		Recommendation string `json:"recommendation"`
 		Status         string `json:"status"`
+		Points         string `json:"points"`
 	}
 	SeniorityInfoExtended struct {
 		SeniorityInfo
