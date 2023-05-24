@@ -13,7 +13,7 @@ import (
 const (
 	SelectAllSeniority     = `SELECT id,name,description,prior_to FROM seniority`
 	SelectCurrentSeniority = `SELECT id,name,description,prior_to,requirements FROM seniority WHERE id = ?`
-	SelectRequirements     = `SELECT r.id,r.name,r.description,r.recommendation,IFNULL(ur.status, 'LOCK') as status FROM requirement r
+	SelectRequirements     = `SELECT r.id,r.name,r.description,r.recommendation,IFNULL(ur.status, 'LOCK'),r.points as status FROM requirement r
     							LEFT JOIN
     							(SELECT status,requirement_id FROM user_requirement WHERE user_id = ?) AS ur on r.id = ur.requirement_id WHERE r.id IN('%s');`
 	SelectNextSeniority = `SELECT id,name,description,requirements FROM seniority WHERE id IN ('%s');`
@@ -82,7 +82,7 @@ func (repository *pathRepositoryDatabase) GetCurrentAndNextSeniority(ctx context
 	seniorityInfo := result[auxId]
 	for rows.Next() {
 		req := entities.RequirementInfo{}
-		err := rows.Scan(&req.Id, &req.Name, &req.Description, &req.Recommendation, &req.Status)
+		err := rows.Scan(&req.Id, &req.Name, &req.Description, &req.Recommendation, &req.Status, &req.Points)
 		if err != nil {
 			return entities.PathExtended{}, err
 		}
@@ -113,7 +113,7 @@ func (repository *pathRepositoryDatabase) GetCurrentAndNextSeniority(ctx context
 		seniorityInfo := result[auxId]
 		for rows2.Next() {
 			req := entities.RequirementInfo{}
-			err = rows2.Scan(&req.Id, &req.Name, &req.Description, &req.Recommendation, &req.Status)
+			err = rows2.Scan(&req.Id, &req.Name, &req.Description, &req.Recommendation, &req.Status, &req.Points)
 			if err != nil {
 				return entities.PathExtended{}, err
 			}
