@@ -46,7 +46,7 @@ func (handler *SeniorityHTTPHandler) HandlerUpdateSeniorityRequest(ctx *gin.Cont
 		ctx.JSON(http.StatusBadRequest, "Invalid status")
 		return
 	}
-	err := handler.usecase.UpdateStatusSeniorityReques(ctx, data.Id, status)
+	err := handler.usecase.UpdateStatusSeniorityRequest(ctx, data.Id, status)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return

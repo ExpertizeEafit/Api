@@ -9,8 +9,10 @@ const (
 	GetSeniorityRequestList = `SELECT lj.id,lj.name,lj.last_name,s.name FROM
     (SELECT sr.id,u.name,u.last_name,sr.seniority_id FROM (SELECT id,user_id,seniority_id FROM seniority_request WHERE status = 'PENDING') sr
         LEFT JOIN user u on sr.user_id = u.id) lj LEFT JOIN seniority s on lj.seniority_id = s.id;`
-	CreateSeniorityRequest = `INSERT INTO seniority_request(user_id, seniority_id) VALUES (?,?);`
-	UpdateStatus           = `UPDATE seniority_request SET status = ? WHERE id = ?;`
+	CreateSeniorityRequest         = `INSERT INTO seniority_request(user_id, seniority_id) VALUES (?,?);`
+	UpdateStatus                   = `UPDATE seniority_request SET status = ? WHERE id = ?;`
+	SelectUserFromSeniorityRequest = `SELECT user_id,seniority_id FROM seniority_request WHERE id = ?`
+	UpdateSeniority                = `UPDATE user SET seniority_id = ? WHERE id = ?`
 )
 
 func (repository *seniorityRepositoryDatabase) GetSeniorityRequestList(ctx context.Context) ([]entities.SeniorityRequest, error) {
@@ -39,6 +41,23 @@ func (repository *seniorityRepositoryDatabase) UpdateStatusSeniorityRequest(ctx 
 	_, err := repository.database.Exec(UpdateStatus, status, id)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (repository *seniorityRepositoryDatabase) SelectUserAndUpdateSeniority(ctx context.Context, id int64) error {
+	row, err := repository.database.Query(SelectUserFromSeniorityRequest, id)
+	if err != nil {
+		return nil
+	}
+	row.Next()
+	user := 0
+	seniority := 0
+	err = row.Scan(&user, &seniority)
+
+	_, err = repository.database.Exec(UpdateSeniority, seniority, user)
+	if err != nil {
+		return nil
 	}
 	return nil
 }

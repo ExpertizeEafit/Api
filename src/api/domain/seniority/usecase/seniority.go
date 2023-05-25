@@ -14,6 +14,13 @@ func (usecase *seniorityUseCases) CreateSeniorityRequest(ctx context.Context, us
 	return usecase.seniorityRepository.CreateSeniorityRequest(ctx, userID, seniorityID)
 }
 
-func (usecase *seniorityUseCases) UpdateStatusSeniorityReques(ctx context.Context, id int64, status entities.Status) error {
-	return usecase.seniorityRepository.UpdateStatusSeniorityRequest(ctx, id, status)
+func (usecase *seniorityUseCases) UpdateStatusSeniorityRequest(ctx context.Context, id int64, status entities.Status) error {
+	err := usecase.seniorityRepository.UpdateStatusSeniorityRequest(ctx, id, status)
+	if err == nil && status == entities.CompletedStatus {
+		err := usecase.seniorityRepository.SelectUserAndUpdateSeniority(ctx, id)
+		if err != nil {
+			return nil
+		}
+	}
+	return err
 }

@@ -10,7 +10,7 @@ import (
 type SeniorityUseCases interface {
 	GetSeniorityRequestList(ctx context.Context) ([]entities.SeniorityRequest, error)
 	CreateSeniorityRequest(ctx context.Context, userID, seniorityID int64) error
-	UpdateStatusSeniorityReques(ctx context.Context, id int64, status entities.Status) error
+	UpdateStatusSeniorityRequest(ctx context.Context, id int64, status entities.Status) error
 }
 
 type seniorityUseCases struct {

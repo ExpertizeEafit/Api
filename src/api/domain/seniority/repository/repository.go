@@ -11,6 +11,7 @@ type SeniorityRepository interface {
 	GetSeniorityRequestList(ctx context.Context) ([]entities.SeniorityRequest, error)
 	CreateSeniorityRequest(ctx context.Context, userID, seniorityID int64) error
 	UpdateStatusSeniorityRequest(ctx context.Context, id int64, status entities.Status) error
+	SelectUserAndUpdateSeniority(ctx context.Context, id int64) error
 }
 
 type seniorityRepository struct {
